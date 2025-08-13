@@ -63,8 +63,20 @@ export function TweetsProvider({ children }) {
       }
     }
     load();
+
+    const interval = setInterval(async () => {
+      try {
+        const data = await api.fetchTweets();
+        if (!ignore) {
+          dispatch({ type: "FETCH_SUCCESS", payload: data });
+        }
+      } catch (err) {
+        console.error("Error fetching tweets:", err);
+      }
+    }, 10 * 60 * 1000);
     return () => {
       ignore = true;
+      clearInterval(interval);
     };
   }, []);
 
