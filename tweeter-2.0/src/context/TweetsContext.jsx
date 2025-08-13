@@ -1,7 +1,11 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
 import * as api from "../lib/api";
 
-const USERNAME = "Or_Tabibian";
+const LOCAL_STORAGE_KEY = "currentUsername";
+
+function getStoredUsername() {
+  return localStorage.getItem(LOCAL_STORAGE_KEY) || "AviRon";
+}
 
 const initialState = {
   tweets: [],
@@ -69,7 +73,7 @@ export function TweetsProvider({ children }) {
     try {
       const newTweet = await api.createTweet({
         content: text,
-        userName: USERNAME,
+        userName: getStoredUsername(),
         date: new Date().toISOString(),
       });
       dispatch({ type: "ADD_SUCCESS", payload: newTweet });
