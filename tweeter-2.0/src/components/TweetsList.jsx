@@ -1,15 +1,33 @@
-import { Card, Text, Stack, Group } from "@mantine/core";
+import { Card, Text, Stack, Group, Loader, Center, Alert } from "@mantine/core";
 import { useTweets } from "../context/TweetsContext.jsx";
 
 export default function TweetsList() {
-  const { tweets } = useTweets();
+  const { tweets, loading, error } = useTweets();
   console.log(tweets);
+
+  if (loading) {
+    return (
+      <Center mih={200}>
+        <Loader />
+      </Center>
+    );
+  }
+
+  if (error) {
+    return (
+      <Stack p="md" style={{ maxWidth: 500, margin: "0 auto" }}>
+        <Alert color="red" title="Failed to load tweets">
+          {error}
+        </Alert>
+      </Stack>
+    );
+  }
 
   return (
     <Stack p="md" style={{ maxWidth: 500, margin: "0 auto" }}>
       {tweets.map((tweet) => (
         <Card
-          key={tweet.id}
+          key={tweet.id ?? tweet.date}
           shadow="sm"
           padding="lg"
           radius="md"
@@ -32,11 +50,11 @@ export default function TweetsList() {
               justifyContent: "space-between",
             }}
           >
-            <Text weight={500} style={{ color: "white" }}>
-              {tweet.username}
+            <Text fw={500} style={{ color: "white" }}>
+              {tweet.userName}
             </Text>
             <Text size="xs" style={{ color: "#ccc" }}>
-              {new Date(tweet.createdAt).toLocaleString()}
+              {new Date(tweet.date).toLocaleString()}
             </Text>
           </Group>
           <Text
@@ -46,7 +64,7 @@ export default function TweetsList() {
               marginTop: "auto",
             }}
           >
-            {tweet.text}
+            {tweet.content}
           </Text>
         </Card>
       ))}

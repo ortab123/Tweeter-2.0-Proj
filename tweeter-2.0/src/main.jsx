@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App.jsx";
 import { MantineProvider } from "@mantine/core";
 import "@mantine/core/styles.css";
-import { TweetsContext, TweetsProvider } from "./context/TweetsContext.jsx";
+import { TweetsProvider } from "./context/TweetsContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

@@ -1,19 +1,20 @@
 import { useState } from "react";
-import { Textarea, Button, Group, Box } from "@mantine/core";
+import { Textarea, Button, Box, Alert } from "@mantine/core";
 import { useTweets } from "../context/TweetsContext.jsx";
 
 export default function CreateTweet() {
   const [text, setText] = useState("");
-  const { addTweet } = useTweets();
+  const { addTweet, posting, postError, clearPostError } = useTweets();
 
   const MAX_LENGTH = 140;
   const isTooLong = text.length > MAX_LENGTH;
 
-  const handleTweet = () => {
-    if (!isTooLong && text.trim()) {
-      addTweet(text.trim());
-      setText("");
-    }
+  const handleTweet = async () => {
+    if ((isTooLong && !text.trim()) || posting) return;
+
+    if (postError) clearPostError();
+    await addTweet(text.trim());
+    setText("");
   };
 
   console.log(addTweet);
@@ -25,21 +26,24 @@ export default function CreateTweet() {
         position: "relative",
       }}
     >
-      <div style={{ width: 500 }}>
-        <Textarea
-          placeholder="What you have in mind..."
-          value={text}
-          onChange={(e) => setText(e.currentTarget.value)}
-          autosize={false}
-          rows={8}
-          style={{ borderRadius: 12, width: "100%" }}
-          error={
-            isTooLong
-              ? `The tweet can't contain more than ${MAX_LENGTH} characters!`
-              : null
-          }
-        />
-      </div>
+      {postError && (
+        <Alert color="red" mb="sm" title="Server error">
+          {postError}
+        </Alert>
+      )}
+      <Textarea
+        placeholder="What you have in mind..."
+        value={text}
+        onChange={(e) => setText(e.currentTarget.value)}
+        autosize={false}
+        rows={8}
+        style={{ borderRadius: 12, width: "100%" }}
+        error={
+          isTooLong
+            ? `The tweet can't contain more than ${MAX_LENGTH} characters!`
+            : null
+        }
+      />
       <Button
         onClick={handleTweet}
         disabled={isTooLong || !text.trim()}
