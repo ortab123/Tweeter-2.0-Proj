@@ -11,7 +11,9 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <MantineProvider withGlobalStyles withNormalizeCSS>
       <TweetsProvider>
-        <BrowserRouter>
+        <BrowserRouter
+          basename={import.meta.env.DEV ? "/" : "/Tweeter-2.0-Proj"}
+        >
           <App />
         </BrowserRouter>
       </TweetsProvider>
