@@ -1,7 +1,10 @@
-import { Group, Anchor, Box } from "@mantine/core";
+import { Group, Anchor, Box, Button } from "@mantine/core";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function Navbar() {
+  const { user, logout } = useAuth();
+
   return (
     <Box
       style={{
@@ -13,21 +16,38 @@ export default function Navbar() {
         padding: "10px 20px",
       }}
     >
-      <Group position="apart">
-        <Anchor
-          component={Link}
-          to="/"
-          style={{ color: "white", fontWeight: 500 }}
-        >
-          Home
-        </Anchor>
-        <Anchor
-          component={Link}
-          to="/profile"
-          style={{ color: "white", fontWeight: 500 }}
-        >
-          Profile
-        </Anchor>
+      <Group justify="space-between">
+        <Group spacing="md">
+          <Anchor
+            component={Link}
+            to="/"
+            style={{ color: "white", fontWeight: 500 }}
+          >
+            Home
+          </Anchor>
+          <Anchor
+            component={Link}
+            to="/profile"
+            style={{ color: "white", fontWeight: 500 }}
+          >
+            Profile
+          </Anchor>
+        </Group>
+        <Group spacing="md">
+          {user ? (
+            <Button variant="subtle" color="gray" onClick={logout}>
+              Logout
+            </Button>
+          ) : (
+            <Anchor
+              component={Link}
+              to="/login"
+              style={{ color: "white", fontWeight: 500 }}
+            >
+              Login
+            </Anchor>
+          )}
+        </Group>
       </Group>
     </Box>
   );

@@ -1,11 +1,6 @@
 import { createContext, useContext, useReducer, useEffect } from "react";
 import * as api from "../lib/api";
-
-const LOCAL_STORAGE_KEY = "currentUsername";
-
-function getStoredUsername() {
-  return localStorage.getItem(LOCAL_STORAGE_KEY) || "AviRon";
-}
+import { useAuth } from "./AuthContext.jsx";
 
 const initialState = {
   tweets: [],
@@ -46,7 +41,9 @@ function reducer(state, action) {
 export const TweetsContext = createContext();
 
 export function TweetsProvider({ children }) {
+  const { user } = useAuth();
   const [tweets, dispatch] = useReducer(reducer, initialState);
+
   useEffect(() => {
     let ignore = false;
     async function load() {
@@ -63,31 +60,22 @@ export function TweetsProvider({ children }) {
       }
     }
     load();
-
-    const interval = setInterval(async () => {
-      try {
-        const data = await api.fetchTweets();
-        if (!ignore) {
-          dispatch({ type: "FETCH_SUCCESS", payload: data });
-        }
-      } catch (err) {
-        console.error("Error fetching tweets:", err);
-      }
-    }, 10 * 60 * 1000);
     return () => {
       ignore = true;
-      clearInterval(interval);
     };
   }, []);
 
   const addTweet = async (text) => {
+    if (!user) return;
+
     dispatch({ type: "ADD_START" });
     try {
       const newTweet = await api.createTweet({
         content: text,
-        userName: getStoredUsername(),
+        userName: user.email,
         date: new Date().toISOString(),
       });
+
       dispatch({ type: "ADD_SUCCESS", payload: newTweet });
     } catch (err) {
       dispatch({ type: "ADD_ERROR", payload: err.message || String(err) });

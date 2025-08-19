@@ -1,9 +1,21 @@
 import { Card, Text, Stack, Group, Loader, Center, Alert } from "@mantine/core";
 import { useTweets } from "../context/TweetsContext.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function TweetsList() {
+  const { user } = useAuth();
+
   const { tweets, loading, error } = useTweets();
-  console.log(tweets);
+
+  if (!user) {
+    return (
+      <Center style={{ minHeight: 200 }}>
+        <Text color="gray" size="lg">
+          Please log in to view tweets.
+        </Text>
+      </Center>
+    );
+  }
 
   if (loading) {
     return (
@@ -60,7 +72,7 @@ export default function TweetsList() {
           <Text
             style={{
               color: "white",
-              alignSelf: "flex-start",
+              alignSelf: "center",
               marginTop: "auto",
             }}
           >

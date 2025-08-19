@@ -1,15 +1,21 @@
 import { useState } from "react";
 import { Textarea, Button, Box, Alert } from "@mantine/core";
 import { useTweets } from "../context/TweetsContext.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
 
 export default function CreateTweet() {
   const [text, setText] = useState("");
   const { addTweet, posting, postError, clearPostError } = useTweets();
+  const { user } = useAuth();
 
   const MAX_LENGTH = 140;
   const isTooLong = text.length > MAX_LENGTH;
 
   const handleTweet = async () => {
+    if (!user) {
+      alert("You must be logged in to tweet!");
+      return;
+    }
     if ((isTooLong && !text.trim()) || posting) return;
 
     if (postError) clearPostError();
@@ -17,7 +23,6 @@ export default function CreateTweet() {
     setText("");
   };
 
-  console.log(addTweet);
   return (
     <Box
       style={{
